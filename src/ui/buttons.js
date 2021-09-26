@@ -1,15 +1,14 @@
 import Phaser from 'phaser'
 
 export default class Buttons extends Phaser.GameObjects.Container
-{
-
-    
-    constructor(scene,x,y,img_off, img_over)
+{   
+    constructor(scene,x,y,img_off, img_over, button_value)
     {
         super(scene,x,y)
         
         this.upImage = scene.add.image(0,0,img_off)
         this.overImage = scene.add.image(0,0,img_over)
+        this.button_value = button_value
         
         this.add(this.upImage)
         this.add(this.overImage)
@@ -27,7 +26,8 @@ export default class Buttons extends Phaser.GameObjects.Container
                 this.overImage.setVisible(false)
                 this.upImage.setVisible(true)
             })
-
         }
+
+        
         
     }

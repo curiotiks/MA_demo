@@ -1,19 +1,18 @@
 import Phaser from 'phaser'
 import Buttons from '../ui/buttons.js'
-
-
-const meanFormat = (meanValue) => `Mean Value: ${meanValue}`
+import meanLabel from '../ui/meanLabel.js'
 
 export default class MakingMeans extends Phaser.Scene {
     constructor() {
         super('makingmeans')
         this.table = []
-        this.meanValue = 0   
+        this.meanValue = 0  
     }
 
     preload() {
         this.load.image('sky', 'assets/sky.png')
 
+        //Should be able to make the buttons into an atlas
         this.load.image('b1', 'assets/buttons_v1/b1_out.png')
         this.load.image('b1_over','assets/buttons_v1/b1_over.png')
 
@@ -45,14 +44,16 @@ export default class MakingMeans extends Phaser.Scene {
     create() {
         //Background
         this.add.image(400, 300, 'sky')
-        
-    //Row One
+
+        this.mLabel = this.meanLabel(400,400, this.meanValue)
+    
+        //Buttons
+        //Row One
         //Button One
-        const but1 = new Buttons(this,100,100,'b1', 'b1_over')
+        const but1 = new Buttons(this, 100, 100, 'b1', 'b1_over', 1)
         this.add.existing(but1)
             .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => {
-                this.table.push(1)
-                console.log(this.table)
+                this.buttonPress(but1.button_value)
             })
         
         //Button Two
@@ -61,6 +62,7 @@ export default class MakingMeans extends Phaser.Scene {
             .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => {
                 this.table.push(2)
                 console.log(this.table)
+                console.log(this.meanValue)
             })
 
         //Button Three
@@ -69,6 +71,7 @@ export default class MakingMeans extends Phaser.Scene {
             .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => {
                 this.table.push(3)
                 console.log(this.table)
+                console.log(this.meanValue)
             })
     //Row Two
         //Button Four
@@ -126,8 +129,11 @@ export default class MakingMeans extends Phaser.Scene {
 
     update() 
     {
-        this.add.text(300,300, this.table.join())
-        this.add.text(400,400, meanFormat(this.meanValue))
+        
+        this.add.text(400,300, this.table.join())   
+
+
+             
     }
 
 
@@ -135,11 +141,12 @@ export default class MakingMeans extends Phaser.Scene {
     Last tutorial I was watching: 
     https://www.youtube.com/watch?v=yWlILdKrbqQ 
     ## Display class
+    X- Display numbers entered into array
     — Make text on screen to print out the mean values
 
     ## Input class
     — create a button that adds a random number to the array
-    — Create buttons 1 though 10 to add specific numbers to the array
+    X— Create buttons 1 though 10 to add specific numbers to the array
 
     ## Stats class
     — Move the makeMean to a new class
@@ -147,7 +154,7 @@ export default class MakingMeans extends Phaser.Scene {
     */
 
 
-    // Statistical Functions
+    // Calculate the mean from a table of values
     makeMean(table) {
 
         let total = 0
@@ -160,4 +167,18 @@ export default class MakingMeans extends Phaser.Scene {
 
     }
 
+    meanLabel(x, y, meanValue) {
+        const style = { fontSize: '32px', fill: '#000' }
+        const label = new meanLabel(this, x, y, meanValue, style)
+        this.add.existing(label)
+        return(label)
+    }    
+
+    buttonPress(value){
+        this.table.push(value)
+        this.meanValue = this.makeMean(this.table)
+        this.mLabel.updateMean(this.meanValue)
+        console.log(this.table)
+        console.log(this.meanValue)
+    }
 }
